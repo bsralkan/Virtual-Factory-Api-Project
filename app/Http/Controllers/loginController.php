@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models;
+use Illuminate\Support\Facades\DB;
+
+class loginController extends Controller
+{
+    public function login(Request $request){
+
+        $user = DB::table('users')->where('username', $request->username)->where('password', $request->password)->first();
+
+        if($user){
+            $data = array(
+                "status"=>"true",
+                "data"=>array(
+                    "username" => $user->username,
+                    "name" => $user->name,
+                    "surname" => $user->surname,
+                    "email" => $user->email
+                )
+            );
+            return $data;
+        }else{
+            return "false";
+        }
+    }
+}
