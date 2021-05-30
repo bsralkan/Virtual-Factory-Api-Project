@@ -24,4 +24,11 @@ Route::prefix('login')->group(function () {
     Route::post("/customerLogin", "loginController@customerLogin");
     Route::post("/customerRegister", "loginController@customerRegister");
 });
+Route::prefix('product')->group(function () {
+    Route::post("/insert", "productController@insert");
+    Route::get("/getAll", "productController@getAll");
+    Route::get("/get/{productId}", "productController@get");
+});
+
+
 
