@@ -51,4 +51,48 @@ class loginController extends Controller
 
         return $data;
     }
+
+    public function customerLogin(Request $request){
+
+        $customer = DB::table('customers')->where('customerName', $request->customerName)->where('password', $request->password)->first();
+
+        if($customer){
+            $data = array(
+                "status"=>"true",
+                "data"=>array(
+                    "username" => $customer->customerName,
+                    "name" => $customer->name,
+                    "surname" => $customer->surname,
+                    "email" => $customer->email
+                )
+            );
+            return $data;
+        }else{
+            return "false";
+        }
+    }
+
+    public function customerRegister(Request $request){
+
+        $customer = new Models\customer();
+        $customer->customerName = $request->customerName;
+        $customer->name = $request->name;
+        $customer->surname = $request->surname;
+        $customer->email = $request->email;
+        $customer->password = $request->password;
+
+        $customer->save();
+
+        $data = array(
+            "status" => "true",
+            "data" => array(
+                "customerName" => $customer->customerName,
+                "name" => $customer->name,
+                "surname" => $customer->surname,
+                "email" => $customer->email
+            )
+        );
+
+        return $data;
+    }
 }
