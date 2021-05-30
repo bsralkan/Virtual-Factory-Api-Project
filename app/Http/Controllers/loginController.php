@@ -24,7 +24,13 @@ class loginController extends Controller
             );
             return $data;
         }else{
-            return "false";
+            $data = array(
+                "status"=>"false",
+                "data"=>array(
+                    "error" => "Kullanıcı veya şifre yanlış"
+                )
+            );
+            return $data;
         }
     }
 
@@ -68,7 +74,13 @@ class loginController extends Controller
             );
             return $data;
         }else{
-            return "false";
+            $data = array(
+                "status"=>"false",
+                "data"=>array(
+                    "error" => "Kullanıcı veya şifre yanlış"
+                )
+            );
+            return $data;
         }
     }
 
