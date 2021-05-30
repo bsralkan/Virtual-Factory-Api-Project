@@ -27,4 +27,28 @@ class loginController extends Controller
             return "false";
         }
     }
+
+    public function register(Request $request){
+
+        $user = new Models\User();
+        $user->username = $request->username;
+        $user->name = $request->name;
+        $user->surname = $request->surname;
+        $user->email = $request->email;
+        $user->password = $request->password;
+
+        $user->save();
+
+        $data = array(
+            "status" => "true",
+            "data" => array(
+                "username" => $user->username,
+                "name" => $user->name,
+                "surname" => $user->surname,
+                "email" => $user->email
+            )
+        );
+
+        return $data;
+    }
 }
