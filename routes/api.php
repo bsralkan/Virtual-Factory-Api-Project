@@ -18,8 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::prefix('login')->group(function () {
+    Route::post("/login", "loginController@login");
+    Route::post("/register", "loginController@register");
+    Route::post("/customerLogin", "loginController@customerLogin");
+    Route::post("/customerRegister", "loginController@customerRegister");
+});
 
-Route::post("/login", "loginController@login");
-Route::post("/register", "loginController@register");
-Route::post("/customerLogin", "loginController@customerLogin");
-Route::post("/customerRegister", "loginController@customerRegister");
