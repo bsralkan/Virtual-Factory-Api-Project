@@ -28,6 +28,8 @@ Route::prefix('product')->group(function () {
     Route::post("/insert", "productController@insert");
     Route::get("/getAll", "productController@getAll");
     Route::get("/get/{productId}", "productController@get");
+
+    Route::post("/insertSubProduct", "productController@insertSubProduct");
 });
 
 

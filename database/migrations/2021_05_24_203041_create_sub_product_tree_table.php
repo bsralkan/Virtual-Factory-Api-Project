@@ -14,7 +14,8 @@ class CreateSubProductTreeTable extends Migration
     public function up()
     {
         Schema::create('sub_product_tree', function (Blueprint $table) {
-            $table->id('sub_product_id');
+            $table->id();
+            $table->string('sub_product_id', 100);
             $table->string('product_id');
             $table->float('amount');
             $table->timestamps();

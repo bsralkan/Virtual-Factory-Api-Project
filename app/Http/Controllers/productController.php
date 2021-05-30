@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\sub_product_tree;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +67,35 @@ class productController extends Controller
                 "data" => "Ürün bulunamadı"
             ]);
 
+            return $data;
+        }
+    }
+
+    public function insertSubProduct(Request $request){
+        try {
+            $product = new sub_product_tree();
+            $product->sub_product_id = $request->sub_product_id;
+            $product->product_id = $request->product_id;
+            $product->amount = $request->amount;
+
+            $product->save();
+
+            $data = array(
+                "status" => "true",
+                "data" => array(
+                    "sub_product_id" => $product->sub_product_id,
+                    "product_id" => $product->product_id,
+                    "amount" => $product->amount
+                )
+            );
+            return $data;
+        }catch (\Exception $e){
+            $data = array(
+                "status" => "false",
+                "data" => array(
+                    "error" => "Error !"
+                )
+            );
             return $data;
         }
     }
