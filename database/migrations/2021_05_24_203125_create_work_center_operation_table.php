@@ -14,8 +14,7 @@ class CreateWorkCenterOperationTable extends Migration
     public function up()
     {
         Schema::create('work_center_operation', function (Blueprint $table) {
-            $table->id();                                               
-            $table->string('wc_opr_id');
+            $table->id('wc_opr_id');
             $table->string('work_center_id');
             $table->string('operation_id');
             $table->integer('speed');

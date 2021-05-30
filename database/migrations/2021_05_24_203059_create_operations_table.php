@@ -14,8 +14,7 @@ class CreateOperationsTable extends Migration
     public function up()
     {
         Schema::create('operations', function (Blueprint $table) {
-            $table->id();                       
-            $table->string('operation_id');
+            $table->id('operation_id');
             $table->string('operation_name');
             $table->string('product_type');
             $table->timestamps();

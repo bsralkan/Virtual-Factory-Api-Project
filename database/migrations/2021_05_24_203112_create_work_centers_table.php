@@ -14,8 +14,7 @@ class CreateWorkCentersTable extends Migration
     public function up()
     {
         Schema::create('work_centers', function (Blueprint $table) {
-            $table->id();                                   
-            $table->string('work_center_id');
+            $table->id('work_center_id');
             $table->string('work_center_name');
             $table->boolean('active');
             $table->timestamps();
