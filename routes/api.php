@@ -28,8 +28,17 @@ Route::prefix('product')->group(function () {
     Route::post("/insert", "productController@insert");
     Route::get("/getAll", "productController@getAll");
     Route::get("/get/{productId}", "productController@get");
-
     Route::post("/insertSubProduct", "productController@insertSubProduct");
+});
+Route::prefix('order')->group(function () {
+    Route::post("/insert", "orderController@insert");
+    Route::get("/getAll", "orderController@getAll");
+    Route::get("/get/{orderId}", "orderController@get");
+});
+Route::prefix('basket')->group(function () {
+    Route::post("/insert", "basketController@insert");
+    Route::get("/getAll", "basketController@getAll");
+    Route::get("/get/{customerId}", "basketController@get");
 });
 
 
