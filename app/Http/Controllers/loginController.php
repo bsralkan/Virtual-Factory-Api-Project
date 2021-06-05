@@ -17,6 +17,7 @@ class loginController extends Controller
                 "status"=>"true",
                 "data"=>array(
                     "username" => $user->username,
+                    "user_id" => $user->user_id,
                     "email" => $user->email
                 )
             );
@@ -45,6 +46,7 @@ class loginController extends Controller
             "status" => "true",
             "data" => array(
                 "username" => $user->username,
+                "user_id" => $user->user_id,
                 "email" => $user->email
             )
         );
@@ -61,6 +63,7 @@ class loginController extends Controller
                 "status"=>"true",
                 "data"=>array(
                     "username" => $customer->customerName,
+                    "customer_id" => $customer->customer_id,
                     "email" => $customer->email
                 )
             );
@@ -89,6 +92,7 @@ class loginController extends Controller
             "status" => "true",
             "data" => array(
                 "customerName" => $customer->customerName,
+                "customer_id" => $customer->customer_id,
                 "email" => $customer->email
             )
         );
