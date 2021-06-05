@@ -34,6 +34,7 @@ Route::prefix('order')->group(function () {
     Route::post("/insert", "orderController@insert");
     Route::get("/getAll", "orderController@getAll");
     Route::get("/get/{orderId}", "orderController@get");
+    Route::get("/getOrderITems/{orderId}", "orderController@getOrderITems");
 });
 Route::prefix('basket')->group(function () {
     Route::post("/insert", "basketController@insert");

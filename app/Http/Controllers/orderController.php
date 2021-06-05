@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OrderItem;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,12 +13,7 @@ class orderController extends Controller
 {
     public function insert(Request $request){
         try {
-            $orderItemss = $request->order_items;
-            return $orderItemss[0]['product_id'];
-
-
             $order = new Order();
-
             $order->customer_id = $request->customer_id;
             $order->order_date = $request->order_date;
             $order->deadline = $request->deadline;
@@ -28,9 +24,9 @@ class orderController extends Controller
 
             foreach ($orderItems as $orderItem) {
                 $order_item = new OrderItem();
-                $order_item->order_id = $order->order_id;
-                $order_item->product_id = $orderItem->product_id;
-                $order_item->amount = $orderItem->amount;
+                $order_item->order_id = $order->id;
+                $order_item->product_id = $orderItem['product_id'];
+                $order_item->amount = $orderItem['amount'];
                 $order_item->save();
             }
 
@@ -48,7 +44,7 @@ class orderController extends Controller
             $data = array(
                 "status" => "false",
                 "data" => array(
-                    "error" => "Error !"
+                    "error" => $e->getMessage()
                 )
             );
             return $data;
@@ -73,6 +69,26 @@ class orderController extends Controller
             $data = array([
                 "status" => "true",
                 "data" => $order
+            ]);
+
+            return $data;
+        }else{
+            $data = array([
+                "status" => "false",
+                "data" => "Sipariş bulunamadı"
+            ]);
+
+            return $data;
+        }
+    }
+
+    public function getOrderITems($orderId){
+        $orderItems = DB::table("order_items")->where("order_id", $orderId)->get();
+
+        if($orderItems->count()>0){
+            $data = array([
+                "status" => "true",
+                "data" => $orderItems
             ]);
 
             return $data;
