@@ -13,19 +13,18 @@ class basketController extends Controller
     public function insert(Request $request){
         try {
             $basket = new Basket();
+            $basket->customer_id = $request->customer_id;
             $basket->product_id = $request->product_id;
-            $basket->product_name = $request->product_name;
-            $basket->product_type = $request->product_type;
+            $basket->amount = $request->amount;
 
             $basket->save();
 
             $data = array(
                 "status" => "true",
                 "data" => array(
+                    "customer_id" => $basket->customer_id,
                     "product_id" => $basket->product_id,
-                    "product_name" => $basket->product_name,
-                    "product_type" => $basket->product_type,
-                    "is_salable" => $basket->is_salable
+                    "amount" => $basket->amount
                 )
             );
             return $data;
