@@ -17,8 +17,6 @@ class loginController extends Controller
                 "status"=>"true",
                 "data"=>array(
                     "username" => $user->username,
-                    "name" => $user->name,
-                    "surname" => $user->surname,
                     "email" => $user->email
                 )
             );
@@ -38,8 +36,6 @@ class loginController extends Controller
 
         $user = new Models\User();
         $user->username = $request->username;
-        $user->name = $request->name;
-        $user->surname = $request->surname;
         $user->email = $request->email;
         $user->password = $request->password;
 
@@ -49,8 +45,6 @@ class loginController extends Controller
             "status" => "true",
             "data" => array(
                 "username" => $user->username,
-                "name" => $user->name,
-                "surname" => $user->surname,
                 "email" => $user->email
             )
         );
@@ -67,8 +61,6 @@ class loginController extends Controller
                 "status"=>"true",
                 "data"=>array(
                     "username" => $customer->customerName,
-                    "name" => $customer->name,
-                    "surname" => $customer->surname,
                     "email" => $customer->email
                 )
             );
@@ -88,8 +80,6 @@ class loginController extends Controller
 
         $customer = new Models\customer();
         $customer->customerName = $request->customerName;
-        $customer->name = $request->name;
-        $customer->surname = $request->surname;
         $customer->email = $request->email;
         $customer->password = $request->password;
 
@@ -99,8 +89,6 @@ class loginController extends Controller
             "status" => "true",
             "data" => array(
                 "customerName" => $customer->customerName,
-                "name" => $customer->name,
-                "surname" => $customer->surname,
                 "email" => $customer->email
             )
         );
