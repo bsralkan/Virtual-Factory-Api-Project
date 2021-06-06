@@ -20,7 +20,7 @@ class orderController extends Controller
 
             $order->save();
 
-            $orderItems = $request->order_items;
+            $orderItems = json_decode($request->order_items, true);
 
             foreach ($orderItems as $orderItem) {
                 $order_item = new OrderItem();
