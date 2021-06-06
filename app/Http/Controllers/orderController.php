@@ -62,8 +62,8 @@ class orderController extends Controller
         return $data;
     }
 
-    public function get($orderId){
-        $order = DB::table("orders")->where("order_id", $orderId)->get();
+    public function get($customerId){
+        $order = DB::table("orders")->where("customer_id", $customerId)->get();
 
         if($order->count()>0){
             $data = array([
@@ -100,5 +100,16 @@ class orderController extends Controller
 
             return $data;
         }
+    }
+
+    public function getOrderSchedules(){
+        $response = DB::table('order_items')
+            ->join('products', 'products.product_id', '=', 'order_items.product_id')
+            ->join('operations', 'products.product_type', '=', 'operations.product_type')
+            ->join('work_center_operation', 'work_center_operation.operation_id', '=', 'operations.operation_id')
+            ->select('order_items.*', 'order_items.amount', 'work_center_operation.speed')
+            //->where('customers.wsi', '=', $wsi)
+            ->get();
+        return $response;
     }
 }
