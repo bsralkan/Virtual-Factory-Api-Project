@@ -33,7 +33,6 @@ Route::prefix('product')->group(function () {
 Route::prefix('order')->group(function () {
     Route::post("/insert", "orderController@insert");
     Route::get("/getAll", "orderController@getAll");
-    Route::get("/get/{orderId}", "orderController@get");
     Route::get("/get/{customerId}", "orderController@get");
     Route::get("/getOrderITems/{orderId}", "orderController@getOrderITems");
     Route::get("/getOrderSchedules", "orderController@getOrderSchedules");
@@ -42,6 +41,26 @@ Route::prefix('basket')->group(function () {
     Route::post("/insert", "basketController@insert");
     Route::get("/getAll", "basketController@getAll");
     Route::get("/get/{customerId}", "basketController@get");
+});
+Route::prefix('workcenter')->group(function () {
+    Route::post("/insert", "workcenterController@insert");
+    Route::get("/getAll", "workcenterController@getAll");
+    Route::get("/get/{wcId}", "workcenterController@get");
+});
+Route::prefix('operation')->group(function () {
+    Route::post("/insert", "operationController@insert");
+    Route::get("/getAll", "operationController@getAll");
+    Route::get("/get/{opId}", "operationController@get");
+});
+Route::prefix('WorkcenterOperation')->group(function () {
+    Route::post("/insert", "WorkcenterOperationController@insert");
+    Route::get("/getAll", "WorkcenterOperationController@getAll");
+    Route::get("/get/{wcOpId}", "WorkcenterOperationController@get");
+});
+Route::prefix('schedule')->group(function () {
+    Route::post("/insert", "scheduleController@insert");
+    Route::get("/getAll", "scheduleController@getAll");
+    Route::get("/get/{productId}", "scheduleController@get");
 });
 
 
