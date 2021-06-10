@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderItem;
 use App\Models\Order;
+use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,7 @@ class orderController extends Controller
                 $order_item->save();
             }
 
+            DB::table("basket")->where("customer_id", $request->customer_id)->delete();
             $data = array(
                 "status" => "true",
                 "data" => array(
@@ -103,66 +105,108 @@ class orderController extends Controller
         }
     }
 
-    public function getOrderSchedules(){
+    public function getOrderSchedules($orderID){
 
-        $operations = DB::table("operations")->get();
-        $pId = 'ethernet05';
-        $response = DB::table('order_items')->get();
+        DB::table("schedule")->truncate();
+
+        $response = DB::table('order_items')->where("order_id", $orderID)->get();
+        $order = DB::table('orders')->where("order_id", $orderID)->get();
+
+        $mytime = \Carbon\Carbon::now();
+        $deadLine = \Carbon\Carbon::parse($order[0]->deadline);
+
+        $diff_in_minutes = $deadLine->diffInMinutes($mytime);
+
         $resultList = array();
+        $totalDuration = 0;
+
         foreach ($response as $item) {
             $tempList = $this->getAllSubProducts($item->product_id);
             $resultList = array_merge($resultList, $tempList);
         }
-        //return $resultList;
 
         $resList = array();
 
+
         foreach ($resultList as $item) {
+
             $product = DB::table("products")->where("product_id", $item->sub_product_id)->get();
             $operation = DB::table("operations")->where("product_type", $product[0]->product_type)->get();
-            $wcoperation = DB::table("work_center_operation")->where("operation_id", $operation[0]->operation_id)->get();
+            $wcoperations = DB::table("work_center_operation")->where("operation_id", $operation[0]->operation_id)->get();
+            $wcoperation = array();
+
+            foreach ($wcoperations as $wcop) {
+                $workcenter = DB::table("work_centers")->where("work_center_id", $wcop->work_center_id)->get();
+                $schedule = DB::table("schedule")->where("work_center", $workcenter[0]->work_center_name)->get();
+
+                $duration = ($item->amount * 1000) / $wcop->speed;
+
+                $totalDuration += $duration;
+
+                $wcoperation = array(
+                    "wc_opr_id" => $wcop->wc_opr_id,
+                    "work_center_id" => $wcop->work_center_id,
+                    "operation_id" => $wcop->operation_id,
+                    "speed" => $wcop->speed
+                );
+
+                if(count($schedule)>0){
+                    $start = $schedule[0]->end;
+                    $scheduleDb = new Schedule();
+                    $scheduleDb->start = 0;
+                    $scheduleDb->end = $duration + $start;
+                    $scheduleDb->work_center = $workcenter[0]->work_center_name;
+                    $scheduleDb->product_id = $item->sub_product_id;
+                    $scheduleDb->save();
+                    break;
+
+                }else{
+                    $scheduleDb = new Schedule();
+                    $scheduleDb->start = 0;
+                    $scheduleDb->end = $duration;
+                    $scheduleDb->work_center = $workcenter[0]->work_center_name;
+                    $scheduleDb->product_id = $item->sub_product_id;
+                    $scheduleDb->save();
+                    break;
+                }
+
+            }
+
             $temp = array(
                 "item" => $item,
                 "product" => $product,
                 "operation" => $operation,
-                "wcOp" => $wcoperation
+                "wcOp" => $wcoperation,
+                "duration" => $duration
             );
-            $resList = array_merge($resList, $temp);
+            $resList [] = $temp;
         }
 
-        return $resList;
+        $isReachable = 0;
 
-
-
-        $productList = array();
-
-        $product = DB::table("products")->where('product_id', $pId)->get();
-        $productList = array_merge($productList, $product->toArray());
-
-        foreach ($resultList as $item) {
-            $product = DB::table("products")->where('product_id', $item->sub_product_id)->get();
-            $productList = array_merge($productList, $product->toArray());
-        }
-
-        return $productList;
-        $res = collect($productList)->groupBy('product_type');
-
-        if(isset($res["twistedpair"])){
-
-            return count($res["twistedpair"]);
+        if($diff_in_minutes < $totalDuration){
+            $isReachable = 0;
         }else{
-            return "urun yok";
+            $isReachable = 1;
         }
+        return $isReachable;
 
+    }
 
-        $response = DB::table('order_items')
-            ->join('products', 'products.product_id', '=', 'order_items.product_id')
-            ->join('operations', 'products.product_type', '=', 'operations.product_type')
-            ->join('work_center_operation', 'work_center_operation.operation_id', '=', 'operations.operation_id')
-            ->select('order_items.*', 'order_items.amount', 'work_center_operation.speed')
-            ->orderByDesc('work_center_operation.speed')
-            ->get();
-        return $response;
+    public function getOrdersWithStatus()
+    {
+        $orders = DB::table("orders")->get();
+        $result = array();
+
+        foreach ($orders as $order) {
+            $isReachable = $this->getOrderSchedules($order->order_id);
+            $data = array(
+                "isReachable" => $isReachable,
+                "order" => $order
+            );
+            $result[] = $data;
+        }
+        return $result;
     }
 
     public function getAllSubProducts($pId)
@@ -198,6 +242,7 @@ class orderController extends Controller
         return $productIds;
 
     }
+
     public function getSubProducts($product_id)
     {
         $sub_products = DB::table("sub_product_tree")->where("product_id", $product_id)->get();
