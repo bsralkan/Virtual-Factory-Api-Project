@@ -135,9 +135,12 @@ class orderController extends Controller
             $wcoperations = DB::table("work_center_operation")->where("operation_id", $operation[0]->operation_id)->get();
             $wcoperation = array();
 
+            $count = count($wcoperations);
+            $i = 0;
+
             foreach ($wcoperations as $wcop) {
                 $workcenter = DB::table("work_centers")->where("work_center_id", $wcop->work_center_id)->get();
-                $schedule = DB::table("schedule")->where("work_center", $workcenter[0]->work_center_name)->get();
+                $schedule = DB::table("schedule")->where("work_center", $workcenter[0]->work_center_name)->orderByDesc('id')->get();
 
                 $duration = ($item->amount * 1000) / $wcop->speed;
 
@@ -151,14 +154,25 @@ class orderController extends Controller
                 );
 
                 if(count($schedule)>0){
-                    $start = $schedule[0]->end;
-                    $scheduleDb = new Schedule();
-                    $scheduleDb->start = 0;
-                    $scheduleDb->end = $duration + $start;
-                    $scheduleDb->work_center = $workcenter[0]->work_center_name;
-                    $scheduleDb->product_id = $item->sub_product_id;
-                    $scheduleDb->save();
-                    break;
+                    if(++$i === $count){
+                        $endd = 1223312312312;
+                        foreach ($wcoperations as $wcoperation) {
+                            $workcenter1 = DB::table("work_centers")->where("work_center_id", $wcoperation->work_center_id)->get();
+                            $schedule = DB::table("schedule")->where("work_center", $workcenter[0]->work_center_name)->orderByDesc('id')->get();
+                            if($schedule[0]->end < $endd){
+                                $workcenterLast = $workcenter1;
+                            }
+                        }
+                        //$schedule = DB::table("schedule")->where("work_center", $workcenter[0]->work_center_name)->orderBy('end')->get();
+                        $start = $schedule[0]->end;
+                        $scheduleDb = new Schedule();
+                        $scheduleDb->start = $start;
+                        $scheduleDb->end = intval($duration + $start);
+                        $scheduleDb->work_center = $workcenterLast[0]->work_center_name;
+                        $scheduleDb->product_id = $item->sub_product_id;
+                        $scheduleDb->save();
+                        break;
+                    }
 
                 }else{
                     $scheduleDb = new Schedule();
